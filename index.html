@@ -1,0 +1,20 @@
+<htlm>
+    <head>
+        <title>Clickmap</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+                               integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+                               crossorigin=""/>
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+                integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+                crossorigin=""></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <p>Hello to clickmap</p>
+        <button type="button" id="download-button">Download json</button>
+        <input type="file" id="input-file" />
+        <div id="map"></div>
+        <script src="map.js"></script>
+    </body>
+</htlm>
