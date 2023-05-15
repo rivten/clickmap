@@ -14,27 +14,39 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 //}
 
 const Been = {
-    NOT_BEEN: 0,
-    BEEN: 1,
+    UNKNOWN: 0,
+    NOT_BEEN: 1,
+    BEEN: 2,
 };
 
 var been = {};
 var layers = {};
 
+const COLORS = {
+    [Been.UNKNOWN]: '#888888',
+    [Been.NOT_BEEN]: '#FF0000',
+    [Been.BEEN]: '#00FF00',
+};
+
+function nextBeen(been) {
+    switch (been) {
+        case Been.UNKNOWN:
+            return Been.NOT_BEEN;
+        case Been.NOT_BEEN:
+            return Been.BEEN;
+        case Been.BEEN:
+            return Been.UNKNOWN;
+    }
+}
+
 function onEachFeature(feature, layer) {
-    been[feature.properties.nom] = Been.NOT_BEEN;
+    been[feature.properties.nom] = Been.UNKNOWN;
     layer.on('click', e => {
-        var nextColor;
-        if (been[feature.properties.nom] == Been.NOT_BEEN) {
-            nextColor = '#00FF00';
-            been[feature.properties.nom] = Been.BEEN;
-        } else {
-            nextColor = '#FF0000';
-            been[feature.properties.nom] = Been.NOT_BEEN;
-        }
+        var nextBeenValue = nextBeen(been[feature.properties.nom]);
+        var nextColor = COLORS[nextBeenValue];
+        been[feature.properties.nom] = nextBeenValue;
         layer.setStyle({color: nextColor})
     });
-    layer.on('hover', e => layer.bindPopup(feature.properties.nom));
     layers[feature.properties.nom] = layer;
 
 }
@@ -50,7 +62,7 @@ fetch('./arrondissements.geojson')
         //});
         L.geoJSON(json, {
             onEachFeature: onEachFeature,
-            style: {color:'#FF0000'},
+            style: {color:COLORS[Been.UNKNOWN]},
         }).addTo(map);
     });
 
@@ -77,12 +89,7 @@ function handleFiles() {
     file.text().then((text) => {
         been = JSON.parse(text);
         for (const [name, _] of Object.entries(been)) {
-            var nextColor;
-            if (been[name] == Been.BEEN) {
-                nextColor = '#00FF00';
-            } else {
-                nextColor = '#FF0000';
-            }
+            var nextColor = COLORS[been[name]];
             layers[name].setStyle({color: nextColor});
         }
     });
